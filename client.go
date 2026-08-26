@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	productionBaseURL    = "https://api.namecheap.com/xml.response"
-	sandboxBaseURL       = "https://api.sandbox.namecheap.com/xml.response"
+	productionBaseURL     = "https://api.namecheap.com/xml.response"
+	sandboxBaseURL        = "https://api.sandbox.namecheap.com/xml.response"
 	defaultIPDetectionURL = "https://api.ipify.org"
 )
 

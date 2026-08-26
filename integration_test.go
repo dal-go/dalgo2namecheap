@@ -7,7 +7,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 // Integration tests require a real NameCheap account.
@@ -55,9 +55,9 @@ func TestIntegration_DomainGet(t *testing.T) {
 
 	domainName := "namecheap.com" // sandbox public domain
 	data := &DomainInfo{}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", domainName), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", domainName), data)
 	if err := c.DomainsCollection().Get(context.Background(), rec); err != nil {
-		if dal.IsNotFound(err) {
+		if record.IsNotFound(err) {
 			t.Skipf("domain %q not found in sandbox account", domainName)
 		}
 		t.Fatalf("get domain: %v", err)
