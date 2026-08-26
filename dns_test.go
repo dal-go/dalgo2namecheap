@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 func TestDNSHostsCollection_Get_Success(t *testing.T) {
@@ -22,7 +22,7 @@ func TestDNSHostsCollection_Get_Success(t *testing.T) {
 
 	c := testClient(t, srv.URL)
 	data := &DNSHosts{}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 	if err := c.DNSHostsCollection().Get(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -54,7 +54,7 @@ func TestDNSHostsCollection_Set_Params(t *testing.T) {
 			{HostName: "@", RecordType: "A", Address: "1.2.3.4", TTL: "1800"},
 		},
 	}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 	if err := c.DNSHostsCollection().Set(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -92,7 +92,7 @@ func TestDNSHostsCollection_Set_MultiRecords(t *testing.T) {
 			{HostName: "www", RecordType: "CNAME", Address: "example.com.", TTL: "3600"},
 		},
 	}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 	if err := c.DNSHostsCollection().Set(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -117,7 +117,7 @@ func TestDNSHostsCollection_Set_SLDTLDSplit(t *testing.T) {
 	data := &DNSHosts{
 		Hosts: []HostRecord{{HostName: "@", RecordType: "A", Address: "1.2.3.4", TTL: "1800"}},
 	}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.co.uk"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.co.uk"), data)
 	if err := c.DNSHostsCollection().Set(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -144,7 +144,7 @@ func TestDNSHostsCollection_Set_MXRecord(t *testing.T) {
 			{HostName: "@", RecordType: "MX", Address: "mail.example.com.", TTL: "1800", MXPref: 5},
 		},
 	}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 	if err := c.DNSHostsCollection().Set(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -164,7 +164,7 @@ func TestDNSHostsCollection_Set_Success(t *testing.T) {
 	data := &DNSHosts{
 		Hosts: []HostRecord{{HostName: "@", RecordType: "A", Address: "1.2.3.4", TTL: "1800"}},
 	}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 	err := c.DNSHostsCollection().Set(context.Background(), rec)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)

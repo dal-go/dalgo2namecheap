@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 // HostRecord represents a single DNS host entry.
@@ -34,7 +35,7 @@ var _ dal.Getter = (*DNSHostsCollection)(nil)
 var _ dal.Setter = (*DNSHostsCollection)(nil)
 
 // Get retrieves DNS host records for the domain named by record.Key().ID.
-func (d *DNSHostsCollection) Get(ctx context.Context, record dal.Record) error {
+func (d *DNSHostsCollection) Get(ctx context.Context, record record.Record) error {
 	domainName := fmt.Sprintf("%v", record.Key().ID)
 	sld, tld := splitDomain(domainName)
 
@@ -76,11 +77,11 @@ func (d *DNSHostsCollection) Get(ctx context.Context, record dal.Record) error {
 }
 
 // Exists returns true if the domain's DNS hosts record exists.
-func (d *DNSHostsCollection) Exists(ctx context.Context, key *dal.Key) (bool, error) {
-	record := dal.NewRecordWithData(key, &DNSHosts{})
-	err := d.Get(ctx, record)
+func (d *DNSHostsCollection) Exists(ctx context.Context, key *record.Key) (bool, error) {
+	rec := record.NewRecordWithData(key, &DNSHosts{})
+	err := d.Get(ctx, rec)
 	if err != nil {
-		if dal.IsNotFound(err) {
+		if record.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -89,7 +90,7 @@ func (d *DNSHostsCollection) Exists(ctx context.Context, key *dal.Key) (bool, er
 }
 
 // Set atomically replaces all DNS host records for the domain named by record.Key().ID.
-func (d *DNSHostsCollection) Set(ctx context.Context, record dal.Record) error {
+func (d *DNSHostsCollection) Set(ctx context.Context, record record.Record) error {
 	domainName := fmt.Sprintf("%v", record.Key().ID)
 	sld, tld := splitDomain(domainName)
 

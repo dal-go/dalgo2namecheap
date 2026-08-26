@@ -10,6 +10,7 @@ import (
 
 	"github.com/dal-go/dalgo/dal"
 	"github.com/dal-go/dalgo/recordset"
+	"github.com/dal-go/record"
 )
 
 // DomainInfo holds information about a registered domain.
@@ -33,7 +34,7 @@ var _ dal.Inserter = (*DomainsCollection)(nil)
 var _ dal.MultiInserter = (*DomainsCollection)(nil)
 
 // Get retrieves domain information for the domain named by record.Key().ID.
-func (d *DomainsCollection) Get(ctx context.Context, record dal.Record) error {
+func (d *DomainsCollection) Get(ctx context.Context, record record.Record) error {
 	domainName := fmt.Sprintf("%v", record.Key().ID)
 
 	params := url.Values{}
@@ -68,11 +69,11 @@ func (d *DomainsCollection) Get(ctx context.Context, record dal.Record) error {
 }
 
 // Exists returns true if the domain exists in the NameCheap account.
-func (d *DomainsCollection) Exists(ctx context.Context, key *dal.Key) (bool, error) {
-	record := dal.NewRecordWithData(key, &DomainInfo{})
-	err := d.Get(ctx, record)
+func (d *DomainsCollection) Exists(ctx context.Context, key *record.Key) (bool, error) {
+	rec := record.NewRecordWithData(key, &DomainInfo{})
+	err := d.Get(ctx, rec)
 	if err != nil {
-		if dal.IsNotFound(err) {
+		if record.IsNotFound(err) {
 			return false, nil
 		}
 		return false, err
@@ -133,12 +134,12 @@ func (d *DomainsCollection) ExecuteQueryToRecordsetReader(_ context.Context, _ d
 }
 
 // Insert is not supported for domain registration.
-func (d *DomainsCollection) Insert(_ context.Context, _ dal.Record, _ ...dal.InsertOption) error {
+func (d *DomainsCollection) Insert(_ context.Context, _ record.Record, _ ...dal.InsertOption) error {
 	return fmt.Errorf("%w: domain registration is not supported in this version", dal.ErrNotImplementedYet)
 }
 
 // InsertMulti is not supported for domain registration.
-func (d *DomainsCollection) InsertMulti(_ context.Context, _ []dal.Record, _ ...dal.InsertOption) error {
+func (d *DomainsCollection) InsertMulti(_ context.Context, _ []record.Record, _ ...dal.InsertOption) error {
 	return fmt.Errorf("%w: domain registration is not supported in this version", dal.ErrNotImplementedYet)
 }
 
