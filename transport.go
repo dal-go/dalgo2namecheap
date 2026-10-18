@@ -62,7 +62,7 @@ func (c *Client) doRequest(ctx context.Context, params url.Values) (*xmlApiRespo
 	if err != nil {
 		return nil, c.sanitizeErr(fmt.Errorf("namecheap: HTTP request failed: %w", err))
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

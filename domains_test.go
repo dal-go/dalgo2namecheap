@@ -90,7 +90,7 @@ func TestNew_MissingIP(t *testing.T) {
 
 func TestNew_MutuallyExclusiveIP(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "1.2.3.4")
+		_, _ = fmt.Fprint(w, "1.2.3.4")
 	}))
 	defer srv.Close()
 
@@ -108,7 +108,7 @@ func TestNew_MutuallyExclusiveIP(t *testing.T) {
 
 func TestNew_AutodetectSuccess(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "  5.6.7.8  ")
+		_, _ = fmt.Fprint(w, "  5.6.7.8  ")
 	}))
 	defer srv.Close()
 
@@ -132,7 +132,7 @@ func TestNew_AutodetectFailure(t *testing.T) {
 		hj, ok := w.(http.Hijacker)
 		if ok {
 			conn, _, _ := hj.Hijack()
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 		w.WriteHeader(500)
@@ -287,7 +287,7 @@ func TestDoRequest_RequiredParams(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainGetInfoResult DomainName="example.com">
+		_, _ = fmt.Fprint(w, successXML(`<DomainGetInfoResult DomainName="example.com">
 			<DomainDetails><ExpiredDate>12/31/2025</ExpiredDate></DomainDetails>
 			<Whoisguard Enabled="ENABLED"/>
 			<DnsDetails/>
@@ -312,7 +312,7 @@ func TestDoRequest_APIKeyNotLeaked(t *testing.T) {
 		hj, ok := w.(http.Hijacker)
 		if ok {
 			conn, _, _ := hj.Hijack()
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 		w.WriteHeader(500)
@@ -339,7 +339,7 @@ func TestDoRequest_APIKeyNotLeaked(t *testing.T) {
 
 func TestDomainsCollection_Get_Success(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, successXML(`<DomainGetInfoResult DomainName="example.com">
+		_, _ = fmt.Fprint(w, successXML(`<DomainGetInfoResult DomainName="example.com">
 			<DomainDetails><ExpiredDate>12/31/2025</ExpiredDate></DomainDetails>
 			<Whoisguard Enabled="ENABLED"/>
 			<DnsDetails>
@@ -374,7 +374,7 @@ func TestDomainsCollection_Get_Success(t *testing.T) {
 
 func TestDomainsCollection_List_ThreeDomains(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, successXML(`<DomainGetListResult>
+		_, _ = fmt.Fprint(w, successXML(`<DomainGetListResult>
 			<Domain Name="a.com" Expires="12/31/2025" IsExpired="false" AutoRenew="true" WhoisGuard="ENABLED"/>
 			<Domain Name="b.com" Expires="01/01/2026" IsExpired="false" AutoRenew="false" WhoisGuard="NOTPRESENT"/>
 			<Domain Name="c.com" Expires="06/15/2024" IsExpired="true" AutoRenew="false" WhoisGuard="ENABLED"/>
@@ -387,7 +387,7 @@ func TestDomainsCollection_List_ThreeDomains(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 
 	var names []string
 	for {
@@ -409,7 +409,7 @@ func TestDomainsCollection_List_PaginationParams(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainGetListResult/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainGetListResult/>`))
 	}))
 	defer srv.Close()
 
@@ -431,7 +431,7 @@ func TestDomainsCollection_List_DefaultPageSize(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainGetListResult/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainGetListResult/>`))
 	}))
 	defer srv.Close()
 
@@ -483,7 +483,7 @@ func TestDomainsCollection_InsertMulti_NotImplemented(t *testing.T) {
 
 func TestDoRequest_MalformedXML(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "<this is not valid xml <<>>")
+		_, _ = fmt.Fprint(w, "<this is not valid xml <<>>")
 	}))
 	defer srv.Close()
 
@@ -513,7 +513,7 @@ func TestDoRequest_EmptyBody(t *testing.T) {
 
 func TestMapAPIError_NotFound(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, errorXML(2019166, "Domain not found"))
+		_, _ = fmt.Fprint(w, errorXML(2019166, "Domain not found"))
 	}))
 	defer srv.Close()
 
@@ -527,7 +527,7 @@ func TestMapAPIError_NotFound(t *testing.T) {
 
 func TestMapAPIError_RateLimited(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, errorXML(2030280, "Too many requests"))
+		_, _ = fmt.Fprint(w, errorXML(2030280, "Too many requests"))
 	}))
 	defer srv.Close()
 
@@ -541,7 +541,7 @@ func TestMapAPIError_RateLimited(t *testing.T) {
 
 func TestMapAPIError_Unknown(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, errorXML(9999, "Something went wrong"))
+		_, _ = fmt.Fprint(w, errorXML(9999, "Something went wrong"))
 	}))
 	defer srv.Close()
 

@@ -23,3 +23,5 @@ jobs:
     uses: strongo/cicd/.github/workflows/workflow.yml@main
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      min_test_coverage_percent: 100
