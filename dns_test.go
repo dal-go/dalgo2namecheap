@@ -13,7 +13,7 @@ import (
 
 func TestDNSHostsCollection_Get_Success(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, successXML(`<DomainDNSGetHostsResult>
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSGetHostsResult>
 			<host Name="@" Type="A" Address="1.2.3.4" TTL="1800" MXPref="10"/>
 			<host Name="www" Type="CNAME" Address="example.com." TTL="1800" MXPref="10"/>
 		</DomainDNSGetHostsResult>`))
@@ -44,7 +44,7 @@ func TestDNSHostsCollection_Set_Params(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
 	}))
 	defer srv.Close()
 
@@ -81,7 +81,7 @@ func TestDNSHostsCollection_Set_MultiRecords(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
 	}))
 	defer srv.Close()
 
@@ -109,7 +109,7 @@ func TestDNSHostsCollection_Set_SLDTLDSplit(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
 	}))
 	defer srv.Close()
 
@@ -134,7 +134,7 @@ func TestDNSHostsCollection_Set_MXRecord(t *testing.T) {
 	var gotQuery url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query()
-		fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
 	}))
 	defer srv.Close()
 
@@ -156,7 +156,7 @@ func TestDNSHostsCollection_Set_MXRecord(t *testing.T) {
 
 func TestDNSHostsCollection_Set_Success(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
+		_, _ = fmt.Fprint(w, successXML(`<DomainDNSSetHostsResult IsSuccess="true"/>`))
 	}))
 	defer srv.Close()
 
