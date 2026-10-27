@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 // ErrRateLimited is returned when the NameCheap API rate limit is exceeded (error code 2030280).
@@ -24,7 +24,7 @@ func (e APIError) Error() string {
 func mapAPIError(code int, message string) error {
 	switch code {
 	case 2019166:
-		return fmt.Errorf("%w: %s", dal.ErrRecordNotFound, message)
+		return fmt.Errorf("%w: %s", record.ErrRecordNotFound, message)
 	case 2030280:
 		return ErrRateLimited
 	default:

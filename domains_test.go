@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 // mockQuery implements dal.Query for testing.
@@ -296,7 +297,7 @@ func TestDoRequest_RequiredParams(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	_ = c.DomainsCollection().Get(context.Background(), rec)
 
 	for _, param := range []string{"ApiUser", "ApiKey", "UserName", "ClientIp"} {
@@ -325,7 +326,7 @@ func TestDoRequest_APIKeyNotLeaked(t *testing.T) {
 	}
 	c.cfg.baseURL = srv.URL
 
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err = c.DomainsCollection().Get(context.Background(), rec)
 	if err == nil {
 		t.Fatal("expected error")
@@ -352,7 +353,7 @@ func TestDomainsCollection_Get_Success(t *testing.T) {
 
 	c := testClient(t, srv.URL)
 	data := &DomainInfo{}
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), data)
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), data)
 	if err := c.DomainsCollection().Get(context.Background(), rec); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -465,7 +466,7 @@ func TestDomainsCollection_List_LimitOver100(t *testing.T) {
 
 func TestDomainsCollection_Insert_NotImplemented(t *testing.T) {
 	c, _ := New(WithAPIUser("u"), WithAPIKey("k"), WithClientIP("1.2.3.4"))
-	err := c.DomainsCollection().Insert(context.Background(), dal.NewRecordWithData(dal.NewKeyWithID("domains", "x.com"), &DomainInfo{}))
+	err := c.DomainsCollection().Insert(context.Background(), record.NewRecordWithData(record.NewKeyWithID("domains", "x.com"), &DomainInfo{}))
 	if !errors.Is(err, dal.ErrNotImplementedYet) {
 		t.Errorf("expected ErrNotImplementedYet, got %v", err)
 	}
@@ -488,7 +489,7 @@ func TestDoRequest_MalformedXML(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err := c.DomainsCollection().Get(context.Background(), rec)
 	if err == nil {
 		t.Error("expected error for malformed XML")
@@ -502,7 +503,7 @@ func TestDoRequest_EmptyBody(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err := c.DomainsCollection().Get(context.Background(), rec)
 	if err == nil {
 		t.Error("expected error for empty body")
@@ -518,9 +519,9 @@ func TestMapAPIError_NotFound(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err := c.DomainsCollection().Get(context.Background(), rec)
-	if !dal.IsNotFound(err) {
+	if !record.IsNotFound(err) {
 		t.Errorf("expected IsNotFound, got %v", err)
 	}
 }
@@ -532,7 +533,7 @@ func TestMapAPIError_RateLimited(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err := c.DomainsCollection().Get(context.Background(), rec)
 	if !errors.Is(err, ErrRateLimited) {
 		t.Errorf("expected ErrRateLimited, got %v", err)
@@ -546,7 +547,7 @@ func TestMapAPIError_Unknown(t *testing.T) {
 	defer srv.Close()
 
 	c := testClient(t, srv.URL)
-	rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+	rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 	err := c.DomainsCollection().Get(context.Background(), rec)
 
 	var apiErr APIError
