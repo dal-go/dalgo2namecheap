@@ -2,10 +2,10 @@ module github.com/dal-go/dalgo2namecheap
 
 go 1.26.0
 
-toolchain go1.27.0
+toolchain go1.27.3
 
 require (
-	github.com/dal-go/dalgo v0.95.3
+	github.com/dal-go/dalgo v0.95.4
 	github.com/dal-go/record v0.1.5
 )
 
