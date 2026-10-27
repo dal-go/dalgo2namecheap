@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 // domainRecordsReader implements dal.RecordsReader for domain list results.
@@ -19,16 +20,16 @@ func newDomainRecordsReader(domains []*DomainInfo) *domainRecordsReader {
 }
 
 // Next returns the next DomainInfo record, or (nil, io.EOF) when exhausted.
-func (r *domainRecordsReader) Next() (dal.Record, error) {
+func (r *domainRecordsReader) Next() (record.Record, error) {
 	if r.idx >= len(r.domains) {
 		return nil, io.EOF
 	}
 	info := r.domains[r.idx]
 	r.idx++
-	key := dal.NewKeyWithID("domains", info.DomainName)
-	record := dal.NewRecordWithData(key, info)
-	record.SetError(nil)
-	return record, nil
+	key := record.NewKeyWithID("domains", info.DomainName)
+	rec := record.NewRecordWithData(key, info)
+	rec.SetError(nil)
+	return rec, nil
 }
 
 // Cursor is not supported for NameCheap list results.

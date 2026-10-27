@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/dal-go/dalgo/dal"
+	"github.com/dal-go/record"
 )
 
 func TestCoverage_Errors(t *testing.T) {
@@ -42,7 +43,7 @@ func TestCoverage_Domains_Exists(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DomainsCollection().Exists(context.Background(), dal.NewKeyWithID("domains", "example.com"))
+		exists, err := c.DomainsCollection().Exists(context.Background(), record.NewKeyWithID("domains", "example.com"))
 		if err != nil || !exists {
 			t.Errorf("Exists = (%v, %v), want (true, nil)", exists, err)
 		}
@@ -55,7 +56,7 @@ func TestCoverage_Domains_Exists(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DomainsCollection().Exists(context.Background(), dal.NewKeyWithID("domains", "notfound.com"))
+		exists, err := c.DomainsCollection().Exists(context.Background(), record.NewKeyWithID("domains", "notfound.com"))
 		if err != nil || exists {
 			t.Errorf("Exists = (%v, %v), want (false, nil)", exists, err)
 		}
@@ -68,7 +69,7 @@ func TestCoverage_Domains_Exists(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DomainsCollection().Exists(context.Background(), dal.NewKeyWithID("domains", "error.com"))
+		exists, err := c.DomainsCollection().Exists(context.Background(), record.NewKeyWithID("domains", "error.com"))
 		if err == nil || exists {
 			t.Errorf("Exists = (%v, %v), want (false, error)", exists, err)
 		}
@@ -89,7 +90,7 @@ func TestCoverage_Domains_Misc(t *testing.T) {
 		defer srv.Close()
 
 		client := testClient(t, srv.URL)
-		rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+		rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 		err := client.DomainsCollection().Get(context.Background(), rec)
 		if err == nil || !strings.Contains(err.Error(), "missing DomainGetInfoResult") {
 			t.Errorf("expected missing DomainGetInfoResult error, got %v", err)
@@ -105,7 +106,7 @@ func TestCoverage_Domains_Misc(t *testing.T) {
 		defer srv.Close()
 
 		client := testClient(t, srv.URL)
-		rec := dal.NewRecordWithData(dal.NewKeyWithID("domains", "example.com"), &DomainInfo{})
+		rec := record.NewRecordWithData(record.NewKeyWithID("domains", "example.com"), &DomainInfo{})
 		err := client.DomainsCollection().Get(context.Background(), rec)
 		if err == nil || !strings.Contains(err.Error(), "failed to parse domain expiry date") {
 			t.Errorf("expected parse error, got %v", err)
@@ -183,7 +184,7 @@ func TestCoverage_DNS(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DNSHostsCollection().Exists(context.Background(), dal.NewKeyWithID("dns", "example.com"))
+		exists, err := c.DNSHostsCollection().Exists(context.Background(), record.NewKeyWithID("dns", "example.com"))
 		if err != nil || !exists {
 			t.Errorf("Exists = (%v, %v), want (true, nil)", exists, err)
 		}
@@ -196,7 +197,7 @@ func TestCoverage_DNS(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DNSHostsCollection().Exists(context.Background(), dal.NewKeyWithID("dns", "notfound.com"))
+		exists, err := c.DNSHostsCollection().Exists(context.Background(), record.NewKeyWithID("dns", "notfound.com"))
 		if err != nil || exists {
 			t.Errorf("Exists = (%v, %v), want (false, nil)", exists, err)
 		}
@@ -209,7 +210,7 @@ func TestCoverage_DNS(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		exists, err := c.DNSHostsCollection().Exists(context.Background(), dal.NewKeyWithID("dns", "error.com"))
+		exists, err := c.DNSHostsCollection().Exists(context.Background(), record.NewKeyWithID("dns", "error.com"))
 		if err == nil || exists {
 			t.Errorf("Exists = (%v, %v), want (false, error)", exists, err)
 		}
@@ -222,7 +223,7 @@ func TestCoverage_DNS(t *testing.T) {
 		defer srv.Close()
 
 		c := testClient(t, srv.URL)
-		rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), &DNSHosts{})
+		rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), &DNSHosts{})
 		err := c.DNSHostsCollection().Get(context.Background(), rec)
 		if err == nil || !strings.Contains(err.Error(), "missing DomainDNSGetHostsResult") {
 			t.Errorf("expected missing result error, got %v", err)
@@ -231,7 +232,7 @@ func TestCoverage_DNS(t *testing.T) {
 
 	t.Run("set_invalid_record_data", func(t *testing.T) {
 		c := testClient(t, "http://localhost")
-		rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), "not-a-dns-hosts")
+		rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), "not-a-dns-hosts")
 		err := c.DNSHostsCollection().Set(context.Background(), rec)
 		if err == nil || !strings.Contains(err.Error(), "record data must be *DNSHosts") {
 			t.Errorf("expected *DNSHosts error, got %v", err)
@@ -258,7 +259,7 @@ func TestCoverage_DNS(t *testing.T) {
 				{HostName: "www", RecordType: "CNAME", Address: "example.com.", TTL: "1800"},
 			},
 		}
-		rec := dal.NewRecordWithData(dal.NewKeyWithID("dns", "example.com"), data)
+		rec := record.NewRecordWithData(record.NewKeyWithID("dns", "example.com"), data)
 		if err := c.DNSHostsCollection().Set(context.Background(), rec); err != nil {
 			t.Fatalf("Set failed: %v", err)
 		}
